@@ -1,8 +1,10 @@
 const puppeteer = require('puppeteer');
 const moment = require('moment');
+const inquirer = require('inquirer');
+const utils = require('./utils');
+
 const { getStationCode } = require('./constant');
 
-const utils = require('./utils');
 const { ORDER_TRAIN } = require('../target');
 
 
@@ -38,7 +40,7 @@ const run = async () => {
   /** take actions below */
   /** 取得選項數值 */
   const { idInput, getInDateSelect, fromStationSelect, toStationSelect, orderNumberSelect, trainNumberInput, submitBtn } = await step1.getAllElmts(page);
-
+  console.log('=======STEP 1=============================');
   console.log(`填入身分證字號：${ID}...`);
   await idInput.type(ID);
 
@@ -82,13 +84,17 @@ const run = async () => {
 
 
 
-  console.log('===step 2====');
-  await page.screenshot({ path: 'step2.jpg' });
+  console.log('=====STEP 2===============================');
   console.log('取得 captcha 圖片...');
   await step2.genCaptchaImg(page);
   const { captchaInput, submitBtn: submitCaptchaBtn } = await step2.getAllElmts(page);
-  console.log('輸入 captcha 驗證碼...');
-  await captchaInput.type('123456');
+
+  const { captchaNum } = await inquirer.prompt([{
+    type: 'input',
+    name: 'captchaNum',
+    message: '請輸入台鐵驗證碼'
+  }]);
+  await captchaInput.type(captchaNum);
   console.log('提交表單...');
   await submitCaptchaBtn.click();
 
@@ -97,8 +103,6 @@ const run = async () => {
 
   console.log('result screenshot is generating...');
   await page.screenshot({ path: 'result.jpg' });
-
-
 
   await browser.close();
   console.log('browser closed');
