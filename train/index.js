@@ -1,4 +1,5 @@
-const fs = require('fs');
+const path = require('path');
+const terminalImage = require('terminal-image');
 const puppeteer = require('puppeteer');
 const moment = require('moment');
 const inquirer = require('inquirer');
@@ -93,9 +94,11 @@ const run = async () => {
   console.log('=====STEP 2===============================');
   console.log('取得 captcha 圖片...');
   await step2.genCaptchaImg(page);
-  await fs.readFile('../captcha.jpg');
-  const { captchaInput, submitBtn: submitCaptchaBtn } = await step2.getAllElmts(page);
+  console.log( // 印出 captcha 圖片
+    await terminalImage.file(path.resolve(__dirname, '../captcha.jpg'))
+  );
 
+  const { captchaInput, submitBtn: submitCaptchaBtn } = await step2.getAllElmts(page);
   const { captchaNum } = await inquirer.prompt([{
     type: 'input',
     name: 'captchaNum',
@@ -113,6 +116,10 @@ const run = async () => {
 
   await browser.close();
   console.log('browser closed');
+
+  console.log( // 印出結果
+    await terminalImage.file(path.resolve(__dirname, '../result.jpg'))
+  );
 };
 
 module.exports = { run };
