@@ -93,9 +93,9 @@ const run = async () => {
 
   console.log('=====STEP 2===============================');
   console.log('取得 captcha 圖片...');
-  await step2.genCaptchaImg(page);
+  const captchaImgBuf = await step2.genCaptchaImg(page);
   console.log( // 印出 captcha 圖片
-    await terminalImage.file(path.resolve(__dirname, '../captcha.jpg'))
+    await terminalImage.buffer(captchaImgBuf)
   );
 
   const { captchaInput, submitBtn: submitCaptchaBtn } = await step2.getAllElmts(page);
@@ -111,15 +111,14 @@ const run = async () => {
   console.log('等待頁面跳轉...');
   await page.waitForNavigation({ waitUntil: 'load' });
 
-  console.log('result screenshot is generating...');
-  await page.screenshot({ path: 'result.jpg' });
+  const resultImgBuf = await page.screenshot();
+  console.log( // 印出結果
+    await terminalImage.buffer(resultImgBuf)
+  );
 
   await browser.close();
   console.log('browser closed');
 
-  console.log( // 印出結果
-    await terminalImage.file(path.resolve(__dirname, '../result.jpg'))
-  );
 };
 
 module.exports = { run };

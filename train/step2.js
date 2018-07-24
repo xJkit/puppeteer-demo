@@ -1,6 +1,6 @@
 const genCaptchaImg = async page => {
   const img = await page.$('#idRandomPic');
-  await img.screenshot({ path: 'captcha.jpg'});
+  return img.screenshot();
 };
 
 const getAllElmts = async page => {
