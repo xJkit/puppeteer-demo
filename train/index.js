@@ -1,3 +1,4 @@
+const fs = require('fs');
 const puppeteer = require('puppeteer');
 const moment = require('moment');
 const inquirer = require('inquirer');
@@ -6,7 +7,6 @@ const utils = require('./utils');
 const { getStationCode } = require('./constant');
 
 const { ORDER_TRAIN } = require('../target');
-
 
 /** steps */
 const step1 = require('./step1');
@@ -19,11 +19,14 @@ const run = async () => {
   const TO_STATION = process.env.TO_STATION;
   const TRAIN_NO = process.env.TRAIN_NO;
   const TICKET_NUMBER = process.env.TICKET_NUMBER; // 張數
+  const TRAVEL_DATE = process.env.TRAVEL_DATE;
+
   console.log('====================================');
   console.log(`身分證字號： ${ID}`);
   console.log(`起站 ${FROM_STATION}`);
   console.log(`迄站： ${TO_STATION}`);
   console.log(`列車代號： ${TRAIN_NO}`);
+  console.log(`出發日期 ${TRAVEL_DATE}`);
   console.log(`張數： ${TICKET_NUMBER}`);
   console.log('====================================');
   /**** */
@@ -58,8 +61,11 @@ const run = async () => {
 
 
   /** 設定選項數值 */
-  console.log(`選擇出發日期: ${getInDates[3]}`);
-  await getInDateSelect.type(getInDates[3]);
+  const dateIndex = getInDates.map(date => date.slice(0, 10)).indexOf(TRAVEL_DATE);
+  if (dateIndex < 0) throw new Error('沒有可選的日期，請重新調整。');
+
+  console.log(`選擇出發日期: ${getInDates[dateIndex]}`);
+  await getInDateSelect.type(getInDates[dateIndex]);
 
 
   console.log(`選擇出發站: ${FROM_STATION}`);
@@ -87,6 +93,7 @@ const run = async () => {
   console.log('=====STEP 2===============================');
   console.log('取得 captcha 圖片...');
   await step2.genCaptchaImg(page);
+  await fs.readFile('../captcha.jpg');
   const { captchaInput, submitBtn: submitCaptchaBtn } = await step2.getAllElmts(page);
 
   const { captchaNum } = await inquirer.prompt([{
