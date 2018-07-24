@@ -5,18 +5,28 @@ const { getStationCode } = require('./constant');
 const utils = require('./utils');
 const { ORDER_TRAIN } = require('../target');
 
-/** Pre defined config */
-const ID = 'A123456789';
-const FROM_STATION = '南港';
-const TO_STATION = '台南';
-const TRAIN_NO = '123';
-const TICKET_NUMBER = '6';
 
 /** steps */
 const step1 = require('./step1');
 const step2 = require('./step2');
 
 const run = async () => {
+  /** Pre defined config */
+  const ID = process.env.ID;
+  const FROM_STATION = process.env.FROM_STATION;
+  const TO_STATION = process.env.TO_STATION;
+  const TRAIN_NO = process.env.TRAIN_NO;
+  const TICKET_NUMBER = process.env.TICKET_NUMBER; // 張數
+  console.log('====================================');
+  console.log(`身分證字號： ${ID}`);
+  console.log(`起站 ${FROM_STATION}`);
+  console.log(`迄站： ${TO_STATION}`);
+  console.log(`列車代號： ${TRAIN_NO}`);
+  console.log(`張數： ${TICKET_NUMBER}`);
+  console.log('====================================');
+  /**** */
+
+
   const browser = await puppeteer.launch({ headless: true });
   browser.on('targetcreated', () => console.log('browser created a new page'));
 
